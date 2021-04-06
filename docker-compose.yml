@@ -1,0 +1,56 @@
+version: "3"
+
+services:
+  db-mongo:
+    image: mongo
+    container_name: db-mongo
+    restart: always
+    tty: true
+    volumes:
+      - ./api-chat-nestjs/.mongodata:/data/db
+    networks:
+      - chat
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+
+  api-chat-nestjs:
+    build:
+      context: api-chat-nestjs
+    container_name: api-chat-nestjs
+    entrypoint: dockerize -wait tcp://db-mongo:27017 -timeout 240s docker-entrypoint.sh
+    #command: npm start
+    tty: true
+    volumes:
+      - ./api-chat-nestjs:/usr/chat/app
+    networks:
+      - chat
+    depends_on:
+      - db-mongo
+    ports:
+      - 3000:3000
+    environment:
+      - DB_HOST=db-mongo
+      - DB_PORT=27017
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - DB_NAME=chat
+
+  ui-chat-vuejs:
+    build:
+      context: ui-chat-vuejs
+    container_name: ui-chat-vuejs
+    #command: npm run serve
+    tty: true
+    volumes:
+      - ./ui-chat-vuejs:/usr/chat/app
+    networks:
+      - chat
+    depends_on:
+      - api-chat-nestjs
+    ports:
+      - 8080:8080
+
+networks:
+  chat:
+    driver: bridge
