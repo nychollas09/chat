@@ -2,27 +2,45 @@ version: "3"
 
 services:
   db-mongo:
-    image: mongo
+    image: mongo:4.4.4
     container_name: db-mongo
     restart: always
-    tty: true
     volumes:
-      - ./api-chat-nestjs/.mongodata:/data/db
+      - ./api-chat-nestjs/.docker/dbdata:/data/db
+      - ./api-chat-nestjs/.docker/mongo:/docker-entrypoint-initdb.d
     networks:
       - chat
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=chat
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=db-mongo
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=root
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=root
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=root
+    depends_on:
+      - db-mongo
+    networks:
+      - chat
 
   api-chat-nestjs:
     build:
       context: api-chat-nestjs
     container_name: api-chat-nestjs
-    entrypoint: dockerize -wait tcp://db-mongo:27017 -timeout 240s docker-entrypoint.sh
+    #entrypoint: dockerize -wait tcp://db-mongo:27017 -timeout 240s npm run start:dev
     #command: npm start
     tty: true
     volumes:
-      - ./api-chat-nestjs:/usr/chat/app
+      - ./api-chat-nestjs:/usr/chat/app/api
     networks:
       - chat
     depends_on:
@@ -30,11 +48,10 @@ services:
     ports:
       - 3000:3000
     environment:
-      - DB_HOST=db-mongo
-      - DB_PORT=27017
-      - DB_USERNAME=root
-      - DB_PASSWORD=root
-      - DB_NAME=chat
+      - DB_URL=mongodb://root:root@db-mongo:27017/chat?authSource=admin
+      - JWT_ACCESS_TOKEN_SECRET=access-chat-tallos
+      - JWT_REFRESH_TOKEN_SECRET=refresh-chat-tallos
+      - JWT_REFRESH_TOKEN_HTTPS_SECURE=false
 
   ui-chat-vuejs:
     build:
@@ -43,13 +60,15 @@ services:
     #command: npm run serve
     tty: true
     volumes:
-      - ./ui-chat-vuejs:/usr/chat/app
+      - ./ui-chat-vuejs:/usr/chat/app/ui
     networks:
       - chat
     depends_on:
       - api-chat-nestjs
     ports:
       - 8080:8080
+    environment:
+      - API_URL=http://api-chat-nestjs:3000
 
 networks:
   chat:

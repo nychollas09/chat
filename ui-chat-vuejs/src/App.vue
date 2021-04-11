@@ -1,14 +1,23 @@
 <template>
   <div id="app">
-    Hello word!!!
+    <Navbar v-if="isAuthenticated" />
+    <router-view></router-view>
   </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { Component, Vue } from 'vue-property-decorator';
+import Navbar from './components/Navbar.vue';
 
-@Options({
-  components: {},
+@Component({
+  components: {
+    Navbar,
+  },
+  data() {
+    return {
+      isAuthenticated: true,
+    };
+  },
 })
 export default class App extends Vue {}
 </script>

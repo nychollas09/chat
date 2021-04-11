@@ -1,10 +1,15 @@
-import { createApp } from 'vue';
+import Vue from 'vue';
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
 import App from './App.vue';
+import Routes from './routes';
+import './assets/styles/style.scss';
 
-import './assets/styles/styles.scss';
+Vue.config.productionTip = false;
 
-createApp(App)
-  .use(BootstrapVue)
-  .use(BootstrapVueIcons)
-  .mount('#app');
+Vue.use(BootstrapVue);
+Vue.use(BootstrapVueIcons);
+
+new Vue({
+  render: (createElement) => createElement(App),
+  router: Routes,
+}).$mount('#app');

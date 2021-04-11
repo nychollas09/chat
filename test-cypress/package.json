@@ -1,0 +1,14 @@
+{
+  "name": "test-cypress",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx cypress run",
+    "open": "npx cypress open"
+  },
+  "author": "Nichollas Falcão",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^7.0.1"
+  }
+}

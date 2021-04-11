@@ -12,20 +12,16 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": [
-      "webpack-env"
-    ],
+    "types": ["webpack-env"],
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@assets": ["src/assets/*"],
+      "@styles": ["src/assets/styles/*"],
+      "@components": ["src/components/*"],
+      "@pages": ["src/pages/*"],
+      "@shared": ["src/shared/*"]
     },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ]
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
+    "strictPropertyInitialization": false
   },
   "include": [
     "src/**/*.ts",
@@ -34,7 +30,5 @@
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
