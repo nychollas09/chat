@@ -9,6 +9,7 @@ Axios.interceptors.request.use(
     return config;
   },
   (error) => {
+    debugger;
     Promise.reject(error);
   },
 );
@@ -17,6 +18,7 @@ Axios.interceptors.response.use(
   (response) => response,
   (error) => {
     const originalRequest = error.config;
+    debugger;
 
     if (error.response.status === 401 && (originalRequest.url as string).includes('/refresh')) {
       VueRoute.push('/login');

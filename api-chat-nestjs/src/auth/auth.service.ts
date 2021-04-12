@@ -52,14 +52,14 @@ export class AuthService {
     return this.login(response, { email });
   }
 
-  private setRefreshTokenInCookie(
+  public setRefreshTokenInCookie(
     response: Response,
     refreshToken: string,
     expires_in: number,
   ): void {
     response.cookie('refreshToken', refreshToken, {
-      maxAge: expires_in,
-      expires: new Date(expires_in),
+      maxAge: expires_in || 0,
+      expires: expires_in ? new Date(expires_in) : undefined,
       httpOnly: true,
       secure: Boolean(process.env.JWT_REFRESH_TOKEN_HTTPS_SECURE),
       path: '/auth/token',

@@ -1,4 +1,13 @@
-import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import AccessUser from 'src/shared/domain/interface/access-user.interface';
@@ -29,5 +38,11 @@ export class AuthController {
       response,
       request.cookies.refreshToken,
     );
+  }
+
+  @Delete('token/revoke')
+  public revokeToken(@Res({ passthrough: true }) response: Response) {
+    this.authService.setRefreshTokenInCookie(response, undefined, undefined);
+    response.status(HttpStatus.NO_CONTENT);
   }
 }
