@@ -15,5 +15,6 @@ module.exports = {
     'consistent-return': 'off',
     'class-methods-use-this': 'off',
     'no-return-assign': 'off',
+    'no-unused-expressions': 'off',
   },
 };

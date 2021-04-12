@@ -50,7 +50,7 @@ import 'vue-router';
 import 'bootstrap-vue';
 import User from '../shared/domain/model/user.model';
 import SigupForm from '../shared/form/sigup.form';
-import { Api } from '../shared/util/axios-provider.util';
+import Api from '../shared/util/axios-provider.util';
 
 @Component
 export default class Sigup extends Vue {

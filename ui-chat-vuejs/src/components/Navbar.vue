@@ -6,7 +6,7 @@
       <b-navbar-nav class="ml-auto">
         <b-nav-text class="text-white"> Olá {{ userFullName }} </b-nav-text>
         <b-button size="sm" class="ml-3" @click="logout">
-          <b-icon icon="power" aria-hidden="true"></b-icon> Logout
+          <b-icon icon="power" aria-hidden="true"></b-icon> Sair
         </b-button>
       </b-navbar-nav>
     </div>
@@ -18,7 +18,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import User from '../shared/domain/model/user.model';
 import 'vue-router';
 import AuthProvider from '../shared/util/auth-provider.util';
-import { AuthApi } from '../shared/util/axios-provider.util';
+import Api from '../shared/util/axios-provider.util';
 
 @Component({
   components: {},
@@ -40,9 +40,9 @@ export default class Navbar extends Vue {
   }
 
   public logout(): void {
-    AuthApi.delete('/revoke').then(() => {
+    Api.delete('/auth/token/revoke').then(() => {
       this.$router.push('/login');
-      AuthProvider.loginEvent.next({ logged: false, user: undefined });
+      AuthProvider.defineToken(undefined);
     });
   }
 }

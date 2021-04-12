@@ -16,9 +16,9 @@ export default class AuthProvider {
     );
   }
 
-  public static defineToken(token: string): void {
-    localStorage.setItem('token', token);
-    AuthProvider.loginEvent.next({ logged: true, user: AuthProvider.user });
+  public static defineToken(token: string | undefined): void {
+    token ? localStorage.setItem('token', token) : localStorage.removeItem('token');
+    AuthProvider.loginEvent.next({ logged: AuthProvider.logged, user: AuthProvider.user });
   }
 
   public static validationToken(token: string | null): boolean {

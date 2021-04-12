@@ -35,10 +35,12 @@ import { Component, Vue } from 'vue-property-decorator';
 import { RxFormBuilder, IFormGroup } from '@rxweb/reactive-forms';
 import LoginForm from '../shared/form/login.form';
 import 'vue-router';
-import { AuthApi } from '../shared/util/axios-provider.util';
+import 'bootstrap-vue';
+import Api from '../shared/util/axios-provider.util';
 import User from '../shared/domain/model/user.model';
 import JWTResponse from '../shared/domain/interface/jwt-response.interface';
 import AuthProvider from '../shared/util/auth-provider.util';
+import ApiError from '../shared/domain/interface/api-error.interface';
 
 @Component
 export default class Login extends Vue {
@@ -50,11 +52,23 @@ export default class Login extends Vue {
   }
 
   public onSubmit(): void {
-    AuthApi.post<JWTResponse>('', { ...new User(this.loginForm.props), grant_type: 'password' })
+    Api.post<JWTResponse>('/auth/token', {
+      ...new User(this.loginForm.props),
+      grant_type: 'password',
+    })
       .then((response) => response.data)
       .then(({ accessToken }) => {
         AuthProvider.defineToken(accessToken);
         this.$router.push('/chat');
+      })
+      .catch((error: { response: { data: ApiError } }) => {
+        const { message, error: responseError } = error.response.data;
+        this.$bvToast.toast(message || responseError, {
+          title: 'Erro',
+          variant: 'danger',
+          solid: true,
+          appendToast: true,
+        });
       });
   }
 

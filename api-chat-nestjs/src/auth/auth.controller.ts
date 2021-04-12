@@ -43,6 +43,7 @@ export class AuthController {
   @Delete('token/revoke')
   public revokeToken(@Res({ passthrough: true }) response: Response) {
     this.authService.setRefreshTokenInCookie(response, undefined, undefined);
+    response.removeHeader('Authorization');
     response.status(HttpStatus.NO_CONTENT);
   }
 }
