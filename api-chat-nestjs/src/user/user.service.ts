@@ -11,8 +11,7 @@ export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   public findAll(): Promise<User[]> {
-    const test = this.userModel.find().exec();
-    return test;
+    return this.userModel.find().exec();
   }
 
   public async getByEmail(email: string): Promise<UserDTO> {
@@ -26,14 +25,25 @@ export class UserService {
         HttpStatus.NOT_FOUND,
       );
     }
-    delete user.password;
     return new UserDTO(user.toObject());
   }
 
   public async save(user: UserDTO): Promise<UserDTO> {
-    await this.getByEmail(user.email);
+    const userExisting = await this.userModel
+      .findOne({ email: user.email })
+      .exec();
+    if (userExisting) {
+      throw new HttpException(
+        {
+          message: 'Usuário já existente para o e-mail informado.',
+          error: 'Conflict',
+        } as HttpExceptionResponse,
+        HttpStatus.CONFLICT,
+      );
+    }
     user.password = BcryptUtil.hashPassword(user.password);
     const newUser = await this.userModel.create(user);
-    return new UserDTO(newUser);
+    newUser.password = undefined;
+    return new UserDTO(newUser.toObject());
   }
 }

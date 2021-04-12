@@ -16,7 +16,7 @@ export class TokenService {
           ? process.env.JWT_ACCESS_TOKEN_SECRET
           : process.env.JWT_REFRESH_TOKEN_SECRET,
     });
-    return res === undefined;
+    return res !== undefined;
   }
 
   public decodeToken(token: string) {

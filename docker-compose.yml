@@ -36,8 +36,7 @@ services:
     build:
       context: api-chat-nestjs
     container_name: api-chat-nestjs
-    #entrypoint: dockerize -wait tcp://db-mongo:27017 -timeout 240s npm run start:dev
-    #command: npm start
+    entrypoint: dockerize -wait tcp://db-mongo:27017 -timeout 240s npm run start
     tty: true
     volumes:
       - ./api-chat-nestjs:/usr/chat/app/api
@@ -52,12 +51,13 @@ services:
       - JWT_ACCESS_TOKEN_SECRET=access-chat-tallos
       - JWT_REFRESH_TOKEN_SECRET=refresh-chat-tallos
       - JWT_REFRESH_TOKEN_HTTPS_SECURE=false
+      - ALLOWED_ORIGINS=http://ui-chat-vuejs:8080
 
   ui-chat-vuejs:
     build:
       context: ui-chat-vuejs
     container_name: ui-chat-vuejs
-    #command: npm run serve
+    entrypoint: npm run serve
     tty: true
     volumes:
       - ./ui-chat-vuejs:/usr/chat/app/ui
@@ -68,7 +68,7 @@ services:
     ports:
       - 8080:8080
     environment:
-      - API_URL=http://api-chat-nestjs:3000
+      - VUE_APP_API_URL=http://api-chat-nestjs:3000
 
 networks:
   chat:

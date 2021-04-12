@@ -21,8 +21,9 @@ export class AuthService {
     { email }: AccessUser,
   ): Promise<JWTResponse> {
     const user = await this.userService.getByEmail(email);
+    user.password = undefined;
     const {
-      token: access_token,
+      token: accessToken,
       expires_in: expires_in_access_token,
     } = this.tokenService.generateAccessToken(user);
     const {
@@ -37,7 +38,7 @@ export class AuthService {
     );
 
     return {
-      access_token,
+      accessToken,
       token_type: 'bearer',
       expires_in: expires_in_access_token,
     };
@@ -47,9 +48,7 @@ export class AuthService {
     response: Response,
     refreshToken: string,
   ): Promise<JWTResponse> {
-    this.tokenService.verifyTokenValid(refreshToken, 'refresh-token');
     const { email } = this.tokenService.decodeToken(refreshToken) as JWTPayload;
-
     return this.login(response, { email });
   }
 

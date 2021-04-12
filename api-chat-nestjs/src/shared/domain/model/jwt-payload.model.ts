@@ -1,7 +1,7 @@
 import UserDTO from '../dto/user.dto';
 
 export default class JWTPayload {
-  public _id: number;
+  public _id: string;
   public email: string;
   public firstName: string;
   public lastName: string;
